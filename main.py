@@ -40,7 +40,7 @@ disease_types = ["Covid", "Normal"]
 
 def disease_predict(file_name):
     path = file_name
-    full_path = "D:\Detection And Analysis of COVID\Covid-Classifier\datasets\images/" + path
+    full_path = "D:\Covid-Classifier\datasets\images/" + path
     img_data = cv2.imread(full_path)
     img_data = cv2.cvtColor(img_data, cv2.COLOR_BGR2GRAY)
 
