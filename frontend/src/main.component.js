@@ -16,11 +16,14 @@ export default function MainComponent() {
 
   const handleUpload = async (e) => {
     e.preventDefault();
-
+    let formData = new FormData();
+    formData.append("file", selectedFile);
     const url = "http://127.0.0.1:8000/predict/";
-
+    const config = {
+      headers: { "content-type": "multipart/form-data" },
+    };
     axios
-      .post(url, { name: selectedFile.name })
+      .post(url, formData, config)
       .then((response) => {
         setResult(true);
         setLabel(response.data.class);
