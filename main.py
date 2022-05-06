@@ -41,6 +41,13 @@ def disease_predict(file_name):
     img_data = cv2.cvtColor(img_data, cv2.COLOR_BGR2RGB)
     hog_data = feature.hog(img_data, multichannel=True) / 255.0
     disease_type_predict = svc.predict(hog_data.reshape(1, -1))
-    return disease_types[disease_type_predict[0]]
+    probability=svc.predict_proba(hog_data.reshape(1, -1))
+    array=[disease_types[disease_type_predict[0]]]
+    for ind,val in enumerate(disease_types):
+        print( f'{probability[0][ind]*100}')
+        array.append(f'{probability[0][ind]*100}')
+    
+    print(array)
+    return array
 
     # uvicorn main:app --reload

@@ -1,11 +1,17 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { VictoryPie } from "victory-pie";
+
 import "./main.component.css";
 
 export default function MainComponent() {
   const [image, setImage] = useState({ preview: "" });
   const [selectedFile, setSelectedFile] = React.useState(null);
-  const [label, setLabel] = React.useState("");
+  const [data, setdata] = React.useState({
+    label: "",
+    covidData: "",
+    normalData: "",
+  });
   const [result, setResult] = React.useState(false);
   const handleChange = (e) => {
     setImage({
@@ -26,7 +32,11 @@ export default function MainComponent() {
       .post(url, formData, config)
       .then((response) => {
         setResult(true);
-        setLabel(response.data.class);
+        setdata({
+          label: response.data.class[0],
+          covidData: response.data.class[1],
+          normalData: response.data.class[2],
+        });
       })
       .catch((error) => {
         console.log("error: ", error);
@@ -100,7 +110,41 @@ export default function MainComponent() {
       ) : (
         ""
       )}
-      {result ? <h1>Report: {label}</h1> : ""}
+      {result ? (
+        <>
+          <h1>
+            Report:
+            {data.label}
+          </h1>
+          <VictoryPie
+            data={[
+              {
+                x: `Covid:${Math.round(data.covidData)}%`,
+                y: Math.round(data.covidData),
+              },
+              {
+                x: `Normal:${Math.round(data.normalData)}%`,
+                y: Math.round(data.normalData),
+              },
+            ]}
+            colorScale={[" #ae163e", "#104323"]}
+            radius={100}
+          />
+          <div style={{ display: "flex", flexDirection: "row" }}>
+            <div style={{ display: "flex", flexDirection: "row" }}>
+              <div class="box blue"></div>{" "}
+              <p style={{ marginTop: "-7px" }}>Normal</p>
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "row" }}>
+              <div class="box wine"></div>{" "}
+              <p style={{ marginTop: "-7px" }}>Covid</p>
+            </div>
+          </div>
+        </>
+      ) : (
+        ""
+      )}
       {result ? (
         <button
           style={{ marginTop: "50px", width: "250px", cursor: "pointer" }}
