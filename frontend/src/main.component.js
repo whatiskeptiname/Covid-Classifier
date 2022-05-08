@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { VictoryPie } from "victory-pie";
 
 import "./main.component.css";
+import LinearWithValueLabel from "./progress";
 
 export default function MainComponent() {
   const [image, setImage] = useState({ preview: "" });
@@ -48,6 +48,7 @@ export default function MainComponent() {
       preview: "",
     });
   };
+
   return (
     <div
       style={{
@@ -116,7 +117,12 @@ export default function MainComponent() {
             Report:
             {data.label}
           </h1>
-          <VictoryPie
+          {data.label === "Covid" ? (
+            <LinearWithValueLabel value={Math.round(data.covidData)} />
+          ) : (
+            <LinearWithValueLabel value={Math.round(data.normalData)} />
+          )}
+          {/* <VictoryPie
             data={[
               {
                 x: `Covid:${Math.round(data.covidData)}%`,
@@ -140,7 +146,7 @@ export default function MainComponent() {
               <div class="box wine"></div>{" "}
               <p style={{ marginTop: "-7px" }}>Covid</p>
             </div>
-          </div>
+          </div> */}
         </>
       ) : (
         ""

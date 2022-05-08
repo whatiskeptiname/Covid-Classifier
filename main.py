@@ -22,20 +22,18 @@ app.add_middleware(
 )
 
 @app.post("/predict")
-async def root(file: UploadFile):
-    file_name = os.getcwd()+"/results/"+file.filename
-    with open(file_name, "wb") as buffer:
+def root(file: UploadFile):
+    path = os.getcwd()+"/results/"+file.filename
+    with open(path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
-    label = disease_predict(file.filename)
+    label = disease_predict(path)
     return {"class": label}
 
 svc = pickle.load(open("./models/svc.pkl", "rb"))
 disease_types = ["Covid", "Normal"]
 
-def disease_predict(file_name):
-    path = file_name
-    full_path = "D:\Covid-Classifier\datasets\images/" + path
-    img_data = cv2.imread(full_path)
+def disease_predict(path):
+    img_data = cv2.imread(path)
     img_data = cv2.cvtColor(img_data, cv2.COLOR_BGR2GRAY)
     img_data = cv2.resize(img_data, (100, 100), interpolation=cv2.INTER_AREA)
     img_data = cv2.cvtColor(img_data, cv2.COLOR_BGR2RGB)
@@ -43,11 +41,10 @@ def disease_predict(file_name):
     disease_type_predict = svc.predict(hog_data.reshape(1, -1))
     probability=svc.predict_proba(hog_data.reshape(1, -1))
     array=[disease_types[disease_type_predict[0]]]
-    for ind,val in enumerate(disease_types):
+    for ind, _ in enumerate(disease_types):
         print( f'{probability[0][ind]*100}')
         array.append(f'{probability[0][ind]*100}')
-    
-    print(array)
+  
     return array
 
     # uvicorn main:app --reload
